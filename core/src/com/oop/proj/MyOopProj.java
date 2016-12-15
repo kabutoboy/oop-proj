@@ -2,43 +2,130 @@ package com.oop.proj;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.math.Vector2;
 
-public class MyOopProj extends ApplicationAdapter {
+import java.util.ArrayList;
+
+public class MyOopProj extends ApplicationAdapter implements InputProcessor {
 	SpriteBatch batch;
 	Texture img;
 
     float stateTime;
 	TextureAtlas atlas;
 	Animation walkAnimation;
+    MovableUnit soldier;
+    ArrayList<Unit> units;
+    float x;
+    float y;
+    float velocityX;
+    float velocityY;
 
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
 		img = new Texture("badlogic.jpg");
-
         atlas = new TextureAtlas(Gdx.files.internal("units.atlas"));
-        walkAnimation = new Animation(0.33f, atlas.findRegions("soldier"), Animation.PlayMode.LOOP);
+        Animation idleAnimation = new Animation(0.33f, atlas.findRegions("soldier_idle"), Animation.PlayMode.LOOP);
+        walkAnimation = new Animation(0.33f, atlas.findRegions("soldier_move"), Animation.PlayMode.LOOP);
+        soldier = new MovableUnit();
+        soldier.setSpeed(50);
+        soldier.setAnimIdle(idleAnimation);
+        soldier.setAnimMove(walkAnimation);
+        soldier.playAnimIdle();
+        units = new ArrayList<Unit>();
+        units.add(soldier);
         stateTime = 0f;
+        Gdx.input.setInputProcessor(this);
 	}
 
 	@Override
 	public void render () {
 		Gdx.gl.glClearColor(1, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        stateTime += Gdx.graphics.getDeltaTime();
-        TextureRegion currentFrame = walkAnimation.getKeyFrame(stateTime, true);
-		batch.begin();
-		batch.draw(img, 0, 0);
-        batch.draw(currentFrame, 0, 0);
-		batch.end();
+        float deltaTime = Gdx.graphics.getDeltaTime();
+        stateTime += deltaTime;
+        batch.begin();
+        for (Unit unit: units) {
+            unit.update(deltaTime);
+            TextureRegion currentFrame = unit.getKeyFrame(stateTime, true);
+            batch.draw(currentFrame, unit.getPosition().x, unit.getPosition().y);
+        }
+        //		batch.draw(img, 0, 0);
+        batch.end();
 	}
+
+//	boolean dragging;
+    @Override public boolean mouseMoved (int screenX, int screenY) {
+        // we can also handle mouse movement without anything pressed
+//      camera.unproject(tp.set(screenX, screenY, 0));
+        return false;
+    }
+
+	 @Override public boolean touchDown (int screenX, int screenY, int pointer, int button) {
+        // ignore if its not left mouse button or first touch pointer
+//        if (button != Input.Buttons.LEFT || pointer > 0) return false;
+//        camera.unproject(tp.set(screenX, screenY, 0));
+//        dragging = true;
+        return true;
+    }
+
+    @Override public boolean touchDragged (int screenX, int screenY, int pointer) {
+//        if (!dragging) return false;
+//        camera.unproject(tp.set(screenX, screenY, 0));
+        return true;
+    }
+
+    @Override public boolean touchUp (int screenX, int screenY, int pointer, int button) {
+//        if (button != Input.Buttons.LEFT || pointer > 0) return false;
+//        camera.unproject(tp.set(screenX, screenY, 0));
+//        dragging = false;
+        return true;
+    }
+
+    @Override public boolean keyDown (int keycode) {
+        switch (keycode) {
+            case Input.Keys.A:
+                soldier.moveLeft();
+                return true;
+            case Input.Keys.D:
+                soldier.moveRight();
+                return true;
+            case Input.Keys.W:
+                soldier.moveUp();
+                return true;
+            case Input.Keys.S:
+                soldier.moveDown();
+                return true;
+        }
+        return false;
+    }
+
+    @Override public boolean keyUp (int keycode) {
+        switch (keycode) {
+            case Input.Keys.A:
+            case Input.Keys.D:
+                soldier.stopMovingX();
+                return true;
+            case Input.Keys.W:
+            case Input.Keys.S:
+                soldier.stopMovingY();
+                return true;
+        }
+        return false;
+    }
+
+    @Override public boolean keyTyped (char character) {
+        return false;
+    }
+
+    @Override public boolean scrolled (int amount) {
+        return false;
+    }
 	
 	@Override
 	public void dispose () {
