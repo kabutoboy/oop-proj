@@ -1,0 +1,27 @@
+
+units.png
+size: 1024,1024
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+soldier
+  rotate: false
+  xy: 2, 476
+  size: 431, 497
+  orig: 1920, 1080
+  offset: 761, 214
+  index: 1
+soldier
+  rotate: false
+  xy: 2, 2
+  size: 429, 472
+  orig: 1920, 1080
+  offset: 732, 354
+  index: 2
+soldier
+  rotate: false
+  xy: 435, 464
+  size: 351, 509
+  orig: 1920, 1080
+  offset: 634, 308
+  index: 0
