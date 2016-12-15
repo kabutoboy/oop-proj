@@ -10,30 +10,38 @@ public class AttackableUnit extends MovableUnit {
     protected Animation animAttack;
 
     protected float attackRate;
+    protected float attackRange;
     protected int attackDamage;
     protected boolean isAttacking;
 
     public AttackableUnit() {
         attackRate = 0;
+        attackRange = 0;
         attackDamage = 0;
         isAttacking = false;
     }
 
     public void setAnimAttack(Animation anim) {
-        animAttack = anim;
+        if (animAttack != anim) {
+            animAttack = anim;
+        }
     }
     public void playAnimAttack() {
-        if (!animCurrent.equals(animAttack)) {
+        if (!isAttacking) {
+//            stateTime = 0f;
             animCurrent = animAttack;
         }
     }
     public void startAttacking() {
-        isAttacking = true;
         playAnimAttack();
+        isAttacking = true;
     }
     public void stopAttacking() {
-        isAttacking = false;
         playAnimIdle();
+        isAttacking = false;
+    }
+    public boolean getIsAttacking() {
+        return isAttacking;
     }
     public void update(float deltaTime) {
         super.update(deltaTime);

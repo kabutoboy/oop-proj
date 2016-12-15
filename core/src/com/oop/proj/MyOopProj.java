@@ -51,7 +51,7 @@ public class MyOopProj extends ApplicationAdapter implements InputProcessor {
 //            batch.draw(currentFrame, unit.getPosition().x, unit.getPosition().y);
 //        }
         //		batch.draw(img, 0, 0);
-        game.render(batch, stateTime, deltaTime);
+        game.render(batch, deltaTime);
         batch.end();
 	}
 
@@ -92,6 +92,12 @@ public class MyOopProj extends ApplicationAdapter implements InputProcessor {
             case Input.Keys.D:
 //                soldier.moveRight();
                 game.addUnit(Soldier.CODE, game.getPlayer());
+                return true;
+            case Input.Keys.R:
+                game.addUnit(Tank.CODE, game.getPlayer());
+                return true;
+            case Input.Keys.Q:
+                game.addUnit(Tank.CODE, game.getEnemy());
                 return true;
 //            case Input.Keys.W:
 //                soldier.moveUp();

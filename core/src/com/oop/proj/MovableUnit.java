@@ -30,48 +30,58 @@ public class MovableUnit extends Unit {
         animMove = anim;
     }
     public void playAnimMove() {
-        if (!animCurrent.equals(animMove)) {
+        if (!isMoving) {
+//            stateTime = 0f;
             animCurrent = animMove;
         }
     }
     public void startMovingLeft() {
-        isMoving = true;
+        direction = -1;
         playAnimMove();
         velocity.set(-speed, velocity.y);
+        isMoving = true;
     }
     public void startMovingRight() {
-        isMoving = true;
+        direction = 1;
         playAnimMove();
         velocity.set(speed, velocity.y);
+        isMoving = true;
     }
     public void startMovingUp() {
-        isMoving = true;
         playAnimMove();
         velocity.set(velocity.x, speed);
+        isMoving = true;
     }
     public void startMovingDown() {
-        isMoving = true;
         playAnimMove();
         velocity.set(velocity.x, -speed);
+        isMoving = true;
     }
     public void stopMovingX() {
-        playAnimIdle();
-        velocity.set(0, velocity.y);
-        isMoving = Math.abs(velocity.y) > 0.001f;
+        if (isMoving) {
+            playAnimIdle();
+            velocity.set(0, velocity.y);
+            isMoving = Math.abs(velocity.y) > 0.001f;
+        }
     }
     public void stopMovingY() {
-        playAnimIdle();
-        velocity.set(velocity.x, 0);
-        isMoving = Math.abs(velocity.x) > 0.001f;
-    }
-    @Override
-    public TextureRegion getKeyFrame(float stateTime, boolean looping) {
-        TextureRegion frame =  animCurrent.getKeyFrame(stateTime, looping);
-        if (frame.isFlipX() != (velocity.x < 0)) {
-            frame.flip(velocity.x < 0, false);
+        if (isMoving) {
+            playAnimIdle();
+            velocity.set(velocity.x, 0);
+            isMoving = Math.abs(velocity.x) > 0.001f;
         }
-        return frame;
     }
+    public boolean getIsMoving() {
+        return isMoving;
+    }
+//    @Override
+//    public TextureRegion getKeyFrame(float stateTime, boolean looping) {
+//        TextureRegion frame =  animCurrent.getKeyFrame(stateTime, looping);
+//        if (frame.isFlipX() != (velocity.x < 0)) {
+//            frame.flip(velocity.x < 0, false);
+//        }
+//        return frame;
+//    }
     public void update(float deltaTime) {
         super.update(deltaTime);
         velocity.add(0, -GRAVITY * deltaTime);

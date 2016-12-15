@@ -15,13 +15,20 @@ public class Unit {
     public Side owner;
 
     protected int life;
+    protected int direction;
     protected Vector2 position;
+    protected Vector2 drawOffset;
     protected Animation animIdle;
     protected Animation animCurrent;
 
+    protected float stateTime;
+
     public Unit () {
         life = 1;
+        direction = 1;
         position = Vector2.Zero.cpy();
+        drawOffset = Vector2.Zero.cpy();
+        stateTime = 0f;
     }
 
     public void takeDamage(int amnt) {
@@ -40,7 +47,10 @@ public class Unit {
     }
 
     public void playAnimIdle() {
-        animCurrent = animIdle;
+        if (animCurrent != animIdle) {
+//            stateTime = 0f;
+            animCurrent = animIdle;
+        }
     }
 
     public void setAnimIdle(Animation anim) {
@@ -49,12 +59,22 @@ public class Unit {
         }
     }
 
-    public TextureRegion getKeyFrame(float stateTime, boolean looping) {
-        return animCurrent.getKeyFrame(stateTime, looping);
+    public TextureRegion getKeyFrame(float deltaTime, boolean looping) {
+        stateTime += deltaTime;
+        TextureRegion frame =  animCurrent.getKeyFrame(stateTime, looping);
+        drawOffset.x = -frame.getRegionWidth() / 2f;
+        if (frame.isFlipX() != (direction < 0)) {
+            frame.flip(direction < 0, false);
+        }
+        return frame;
     }
 
     public Vector2 getPosition() {
         return position;
+    }
+
+    public Vector2 getDrawPosition() {
+        return position.cpy().add(drawOffset);
     }
 
     public void setPosition(Vector2 pos) {

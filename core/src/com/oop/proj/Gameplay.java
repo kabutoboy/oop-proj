@@ -41,6 +41,11 @@ public class Gameplay {
                 loadAnimation(Soldier.NAME, soldier);
                 unit = soldier;
                 break;
+            case Tank.CODE:
+                Tank tank = new Tank();
+                loadAnimation(Tank.NAME, tank);
+                unit = tank;
+                break;
         }
         if (null != unit) {
             unit.owner = buyer;
@@ -77,12 +82,70 @@ public class Gameplay {
         unit.playAnimIdle();
     }
 
-    public void render(SpriteBatch batch, float stateTime, float deltaTime) {
+    public void render(SpriteBatch batch, float deltaTime) {
         Collections.sort(units, UNIT_COMPARATOR);
-        for (Unit unit: units) {
+        for (int i = 0; i < units.size(); i++) {
+            Unit unit = units.get(i);
             unit.update(deltaTime);
-            TextureRegion currentFrame = unit.getKeyFrame(stateTime, true);
-            batch.draw(currentFrame, unit.getPosition().x, unit.getPosition().y);
+            if (unit instanceof AttackableUnit) {
+                AttackableUnit atkUnit = (AttackableUnit) unit;
+                // looking to the right
+                if (unit.owner.getDirection() > 0) {
+                    // first enemy to the right
+                    int j;
+                    for (j = i+1; j < units.size(); j++) {
+                        if (units.get(j).owner != unit.owner) {
+                            break;
+                        }
+                    }
+                    if (j < units.size()) {
+                        if (units.get(j).getPosition().x - unit.getPosition().x < atkUnit.attackRange) {
+                            // at least one enemy is in range of attacking
+                            atkUnit.stopMovingX();
+                            atkUnit.startAttacking();
+                        } else {
+                            if (atkUnit.getIsAttacking()) {
+                                atkUnit.stopAttacking();
+                                atkUnit.startMovingRight();
+                            }
+                        }
+                    } else {
+                        if (atkUnit.getIsAttacking()) {
+                            atkUnit.stopAttacking();
+                            atkUnit.startMovingRight();
+                        }
+                    }
+                }
+                // looking to the left
+                else {
+                    // first enemy to the left
+                    int j;
+                    for (j = i-1; j >= 0; j--) {
+                        if (units.get(j).owner != unit.owner) {
+                            break;
+                        }
+                    }
+                    if (j >= 0) {
+                        if (unit.getPosition().x - units.get(j).getPosition().x < atkUnit.attackRange) {
+                            // at least one enemy is in range of attacking
+                            atkUnit.stopMovingX();
+                            atkUnit.startAttacking();
+                        } else {
+                            if (atkUnit.getIsAttacking()) {
+                                atkUnit.stopAttacking();
+                                atkUnit.startMovingLeft();
+                            }
+                        }
+                    } else {
+                        if (atkUnit.getIsAttacking()) {
+                            atkUnit.stopAttacking();
+                            atkUnit.startMovingLeft();
+                        }
+                    }
+                }
+            }
+            TextureRegion currentFrame = unit.getKeyFrame(deltaTime, true);
+            batch.draw(currentFrame, unit.getDrawPosition().x, unit.getDrawPosition().y);
         }
     }
 
