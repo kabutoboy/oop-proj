@@ -1,26 +1,47 @@
 
 units.png
-size: 512,512
+size: 1024,512
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-soldier_idle
-  rotate: false
-  xy: 220, 234
-  size: 176, 255
-  orig: 960, 540
-  offset: 317, 154
-  index: 0
-soldier_move
-  rotate: false
-  xy: 220, 234
-  size: 176, 255
-  orig: 960, 540
-  offset: 317, 154
-  index: 0
-soldier_move
+soldier_attack
   rotate: false
   xy: 2, 240
+  size: 338, 260
+  orig: 960, 540
+  offset: 375, 151
+  index: 1
+soldier_attack
+  rotate: false
+  xy: 342, 264
+  size: 356, 236
+  orig: 960, 540
+  offset: 309, 187
+  index: 2
+soldier_attack
+  rotate: false
+  xy: 342, 7
+  size: 176, 255
+  orig: 960, 540
+  offset: 388, 144
+  index: 0
+soldier_idle
+  rotate: false
+  xy: 520, 7
+  size: 176, 255
+  orig: 960, 540
+  offset: 317, 154
+  index: 0
+soldier_move
+  rotate: false
+  xy: 520, 7
+  size: 176, 255
+  orig: 960, 540
+  offset: 317, 154
+  index: 0
+soldier_move
+  rotate: false
+  xy: 700, 251
   size: 216, 249
   orig: 960, 540
   offset: 380, 107

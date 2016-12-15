@@ -17,29 +17,24 @@ public class MyOopProj extends ApplicationAdapter implements InputProcessor {
 
     float stateTime;
 	TextureAtlas atlas;
-	Animation walkAnimation;
-    MovableUnit soldier;
-    ArrayList<Unit> units;
-    float x;
-    float y;
-    float velocityX;
-    float velocityY;
+    Gameplay game;
 
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-		img = new Texture("badlogic.jpg");
+//		img = new Texture("badlogic.jpg");
         atlas = new TextureAtlas(Gdx.files.internal("units.atlas"));
-        Animation idleAnimation = new Animation(0.33f, atlas.findRegions("soldier_idle"), Animation.PlayMode.LOOP);
-        walkAnimation = new Animation(0.33f, atlas.findRegions("soldier_move"), Animation.PlayMode.LOOP);
-        soldier = new MovableUnit();
-        soldier.setSpeed(50);
-        soldier.setAnimIdle(idleAnimation);
-        soldier.setAnimMove(walkAnimation);
-        soldier.playAnimIdle();
-        units = new ArrayList<Unit>();
-        units.add(soldier);
+//        Animation idleAnimation = new Animation(0.33f, atlas.findRegions("soldier_idle"), Animation.PlayMode.LOOP);
+//        walkAnimation = new Animation(0.33f, atlas.findRegions("soldier_move"), Animation.PlayMode.LOOP);
+//        soldier = new MovableUnit();
+//        soldier.setSpeed(50);
+//        soldier.setAnimIdle(idleAnimation);
+//        soldier.setAnimMove(walkAnimation);
+//        soldier.playAnimIdle();
+//        units = new ArrayList<Unit>();
+//        units.add(soldier);
         stateTime = 0f;
+        game = new Gameplay(atlas);
         Gdx.input.setInputProcessor(this);
 	}
 
@@ -50,12 +45,13 @@ public class MyOopProj extends ApplicationAdapter implements InputProcessor {
         float deltaTime = Gdx.graphics.getDeltaTime();
         stateTime += deltaTime;
         batch.begin();
-        for (Unit unit: units) {
-            unit.update(deltaTime);
-            TextureRegion currentFrame = unit.getKeyFrame(stateTime, true);
-            batch.draw(currentFrame, unit.getPosition().x, unit.getPosition().y);
-        }
+//        for (Unit unit: units) {
+//            unit.update(deltaTime);
+//            TextureRegion currentFrame = unit.getKeyFrame(stateTime, true);
+//            batch.draw(currentFrame, unit.getPosition().x, unit.getPosition().y);
+//        }
         //		batch.draw(img, 0, 0);
+        game.render(batch, stateTime, deltaTime);
         batch.end();
 	}
 
@@ -90,17 +86,19 @@ public class MyOopProj extends ApplicationAdapter implements InputProcessor {
     @Override public boolean keyDown (int keycode) {
         switch (keycode) {
             case Input.Keys.A:
-                soldier.moveLeft();
+//                soldier.moveLeft();
+                game.addUnit(Soldier.CODE, game.getEnemy());
                 return true;
             case Input.Keys.D:
-                soldier.moveRight();
+//                soldier.moveRight();
+                game.addUnit(Soldier.CODE, game.getPlayer());
                 return true;
-            case Input.Keys.W:
-                soldier.moveUp();
-                return true;
-            case Input.Keys.S:
-                soldier.moveDown();
-                return true;
+//            case Input.Keys.W:
+//                soldier.moveUp();
+//                return true;
+//            case Input.Keys.S:
+//                soldier.moveDown();
+//                return true;
         }
         return false;
     }
@@ -109,11 +107,11 @@ public class MyOopProj extends ApplicationAdapter implements InputProcessor {
         switch (keycode) {
             case Input.Keys.A:
             case Input.Keys.D:
-                soldier.stopMovingX();
+//                soldier.stopMovingX();
                 return true;
             case Input.Keys.W:
             case Input.Keys.S:
-                soldier.stopMovingY();
+//                soldier.stopMovingY();
                 return true;
         }
         return false;
@@ -130,6 +128,6 @@ public class MyOopProj extends ApplicationAdapter implements InputProcessor {
 	@Override
 	public void dispose () {
 		batch.dispose();
-		img.dispose();
+//		img.dispose();
 	}
 }
