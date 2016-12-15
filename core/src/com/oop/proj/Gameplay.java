@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveByAction;
+import com.badlogic.gdx.utils.Array;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -53,10 +54,10 @@ public class Gameplay {
             if (unit instanceof MovableUnit) {
                 MovableUnit mvUnit = (MovableUnit)unit;
                 if (buyer.getDirection() > 0) {
-                    unit.setPosition(new Vector2(0, 0));
+                    unit.setPosition(new Vector2(100, 0));
                     mvUnit.startMovingRight();
                 } else {
-                    unit.setPosition(new Vector2(700, 0));
+                    unit.setPosition(new Vector2(1100, 0));
                     mvUnit.startMovingLeft();
                 }
             }
@@ -72,9 +73,10 @@ public class Gameplay {
                 0.33f,
                 atlas.findRegions(name + "_move"),
                 Animation.PlayMode.LOOP);
+        Array<TextureAtlas.AtlasRegion> attackFrames = atlas.findRegions(name + "_attack");
         Animation attackAnimation = new Animation(
-                0.33f,
-                atlas.findRegions(name + "_attack"),
+                1f / unit.getAttackRate() / (float)attackFrames.size,
+                attackFrames,
                 Animation.PlayMode.LOOP);
         unit.setAnimIdle(idleAnimation);
         unit.setAnimMove(moveAnimation);
@@ -89,27 +91,36 @@ public class Gameplay {
             unit.update(deltaTime);
             if (unit instanceof AttackableUnit) {
                 AttackableUnit atkUnit = (AttackableUnit) unit;
+                boolean attackNow = (atkUnit.getAttackTime() >= atkUnit.getAttackPeriod());
+                boolean atLeastOneEnemy = false;
                 // looking to the right
                 if (unit.owner.getDirection() > 0) {
                     // first enemy to the right
                     int j;
                     for (j = i+1; j < units.size(); j++) {
                         if (units.get(j).owner != unit.owner) {
-                            break;
-                        }
-                    }
-                    if (j < units.size()) {
-                        if (units.get(j).getPosition().x - unit.getPosition().x < atkUnit.attackRange) {
-                            // at least one enemy is in range of attacking
-                            atkUnit.stopMovingX();
-                            atkUnit.startAttacking();
-                        } else {
-                            if (atkUnit.getIsAttacking()) {
-                                atkUnit.stopAttacking();
-                                atkUnit.startMovingRight();
+                            if (units.get(j).getPosition().x - unit.getPosition().x < atkUnit.attackRange) {
+                                atLeastOneEnemy = true;
+                                // enemy is in range of attacking
+                                atkUnit.stopMovingX();
+                                atkUnit.startAttacking();
+                                // inflict damage to enemies
+                                if (attackNow) {
+                                    units.get(j).takeDamage(atkUnit.attackDamage);
+                                    if (units.get(j).isDead()) {
+                                        units.remove(j);
+                                        j--;
+                                    }
+                                }
+                            } else {
+                                break;
                             }
                         }
-                    } else {
+                    }
+                    if (attackNow) {
+                        atkUnit.resetAttackTime();
+                    }
+                    if (!atLeastOneEnemy) {
                         if (atkUnit.getIsAttacking()) {
                             atkUnit.stopAttacking();
                             atkUnit.startMovingRight();
@@ -118,25 +129,30 @@ public class Gameplay {
                 }
                 // looking to the left
                 else {
-                    // first enemy to the left
                     int j;
                     for (j = i-1; j >= 0; j--) {
                         if (units.get(j).owner != unit.owner) {
-                            break;
-                        }
-                    }
-                    if (j >= 0) {
-                        if (unit.getPosition().x - units.get(j).getPosition().x < atkUnit.attackRange) {
-                            // at least one enemy is in range of attacking
-                            atkUnit.stopMovingX();
-                            atkUnit.startAttacking();
-                        } else {
-                            if (atkUnit.getIsAttacking()) {
-                                atkUnit.stopAttacking();
-                                atkUnit.startMovingLeft();
+                            if (unit.getPosition().x - units.get(j).getPosition().x < atkUnit.attackRange) {
+                                atLeastOneEnemy = true;
+                                // enemy is in range of attacking
+                                atkUnit.stopMovingX();
+                                atkUnit.startAttacking();
+                                // inflict damage to enemies
+                                if (attackNow) {
+                                    units.get(j).takeDamage(atkUnit.attackDamage);
+                                    if (units.get(j).isDead()) {
+                                        units.remove(j);
+                                    }
+                                }
+                            } else {
+                                break;
                             }
                         }
-                    } else {
+                    }
+                    if (attackNow) {
+                        atkUnit.resetAttackTime();
+                    }
+                    if (!atLeastOneEnemy) {
                         if (atkUnit.getIsAttacking()) {
                             atkUnit.stopAttacking();
                             atkUnit.startMovingLeft();
@@ -146,6 +162,15 @@ public class Gameplay {
             }
             TextureRegion currentFrame = unit.getKeyFrame(deltaTime, true);
             batch.draw(currentFrame, unit.getDrawPosition().x, unit.getDrawPosition().y);
+        }
+    }
+
+    public void removeUnit(Unit unit) {
+        for (int i = 0; i < units.size(); i++) {
+            if (units.get(i) == unit) {
+                units.remove(i);
+                break;
+            }
         }
     }
 

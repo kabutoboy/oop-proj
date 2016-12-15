@@ -1,0 +1,27 @@
+
+stage.png
+size: 1024,1024
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+background
+  rotate: false
+  xy: 2, 497
+  size: 1000, 250
+  orig: 1000, 250
+  offset: 0, 0
+  index: -1
+tower_enemy
+  rotate: false
+  xy: 2, 2
+  size: 391, 493
+  orig: 960, 540
+  offset: 309, 42
+  index: -1
+tower_player
+  rotate: false
+  xy: 395, 109
+  size: 338, 386
+  orig: 960, 540
+  offset: 275, 136
+  index: -1

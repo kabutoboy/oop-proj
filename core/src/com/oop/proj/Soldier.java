@@ -12,7 +12,8 @@ public class Soldier extends AttackableUnit {
         life = 50;
         attackDamage = 10;
         attackRange = 1.5f * 100f;
-        attackRate = 10f / 10f;
-        speed = 1.5f * 100f;
+        attackRate = 1f;
+        attackPeriod = 1f / attackRate;
+        speed = 150f;
     }
 }

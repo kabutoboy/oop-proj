@@ -12,7 +12,8 @@ public class Tank extends AttackableUnit {
         life = 100;
         attackDamage = 30;
         attackRange = 2.0f * 100f;
-        attackRate = 15f / 30f;
-        speed = 1.0f * 100f;
+        attackRate = 0.5f;
+        attackPeriod = 1f / attackRate;
+        speed = 100f;
     }
 }

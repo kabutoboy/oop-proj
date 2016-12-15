@@ -14,6 +14,9 @@ import java.util.ArrayList;
 public class MyOopProj extends ApplicationAdapter implements InputProcessor {
 	SpriteBatch batch;
 	Texture img;
+    Sprite background;
+    Sprite towerPlayer;
+    Sprite towerEnemy;
 
     float stateTime;
 	TextureAtlas atlas;
@@ -23,7 +26,23 @@ public class MyOopProj extends ApplicationAdapter implements InputProcessor {
 	public void create () {
 		batch = new SpriteBatch();
 //		img = new Texture("badlogic.jpg");
+//        background = new Sprite(new Texture("stage.png"));
+//        background.setScale(600f / background.getHeight());
+//        background.setPosition(0, 0);
+//        towerPlayer = new Sprite(new Texture("side_good.png"));
+//        towerPlayer.setScale(0.5f);
+//        towerEnemy = new Sprite(new Texture("side_bad.png"));
+//        towerEnemy.setScale(0.5f);
+//        towerEnemy.setPosition(300, 0);
         atlas = new TextureAtlas(Gdx.files.internal("units.atlas"));
+        TextureAtlas stageAtlas = new TextureAtlas(Gdx.files.internal("stage.atlas"));
+        background = stageAtlas.createSprite("background");
+        background.setSize(2400, 600);
+        towerPlayer = stageAtlas.createSprite("tower_player");
+        TextureAtlas.AtlasRegion towerPlayerRegion = stageAtlas.findRegion("tower_player");
+        towerPlayer.setPosition(-240, -100);
+        towerEnemy = stageAtlas.createSprite("tower_enemy");
+        towerEnemy.setPosition(460, 0);
 //        Animation idleAnimation = new Animation(0.33f, atlas.findRegions("soldier_idle"), Animation.PlayMode.LOOP);
 //        walkAnimation = new Animation(0.33f, atlas.findRegions("soldier_move"), Animation.PlayMode.LOOP);
 //        soldier = new MovableUnit();
@@ -45,6 +64,9 @@ public class MyOopProj extends ApplicationAdapter implements InputProcessor {
         float deltaTime = Gdx.graphics.getDeltaTime();
         stateTime += deltaTime;
         batch.begin();
+        background.draw(batch);
+        towerPlayer.draw(batch);
+        towerEnemy.draw(batch);
 //        for (Unit unit: units) {
 //            unit.update(deltaTime);
 //            TextureRegion currentFrame = unit.getKeyFrame(stateTime, true);
