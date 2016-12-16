@@ -1,9 +1,7 @@
 package com.oop.proj;
 
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveByAction;
 import com.badlogic.gdx.utils.Array;
@@ -24,14 +22,22 @@ public class Gameplay {
     protected ArrayList<Unit> units;
 
     protected TextureAtlas atlas;
+    protected BitmapFont hpFont;
+    protected BitmapFont goldFont;
 
     public Gameplay(TextureAtlas atl) {
         player = new Side();
         enemy = new Side();
         player.setDirection(1);
         enemy.setDirection(-1);
+        player.setLife(100);
+        enemy.setLife(100);
         atlas = atl;
         units = new ArrayList<Unit>();
+        hpFont = new BitmapFont();
+        hpFont.setColor(Color.RED);
+        goldFont = new BitmapFont();
+        goldFont.setColor(Color.GOLD);
     }
 
     public void addUnit(int code, Side buyer) {
@@ -86,9 +92,28 @@ public class Gameplay {
 
     public void render(SpriteBatch batch, float deltaTime) {
         Collections.sort(units, UNIT_COMPARATOR);
+        hpFont.draw(batch, Integer.toString(player.getLife()), 10, 40);
+        hpFont.draw(batch, Integer.toString(enemy.getLife()), 1000, 40);
+        goldFont.draw(batch, Float.toString(player.getGold()), 10, 20);
+        goldFont.draw(batch, Float.toString(enemy.getGold()), 1000, 20);
+        player.updateGold(deltaTime);
+        enemy.updateGold(deltaTime);
         for (int i = 0; i < units.size(); i++) {
             Unit unit = units.get(i);
             unit.update(deltaTime);
+            // damage to side
+            if (unit.getPosition().x < -50 || unit.getPosition().x > 1250) {
+                // damage enemy
+                if (unit.owner == player) {
+                    enemy.subLife((int)Math.ceil(0.1*(double)unit.life));
+                }
+                // damage player
+                else {
+                    player.subLife((int)Math.ceil(0.1*(double)unit.life));
+                }
+                units.remove(i);
+                i--;
+            }
             if (unit instanceof AttackableUnit) {
                 AttackableUnit atkUnit = (AttackableUnit) unit;
                 boolean attackNow = (atkUnit.getAttackTime() >= atkUnit.getAttackPeriod());

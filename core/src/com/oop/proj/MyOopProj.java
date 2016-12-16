@@ -4,6 +4,7 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
@@ -21,6 +22,7 @@ public class MyOopProj extends ApplicationAdapter implements InputProcessor {
     float stateTime;
 	TextureAtlas atlas;
     Gameplay game;
+    Music gameMusic;
 
 	@Override
 	public void create () {
@@ -55,6 +57,10 @@ public class MyOopProj extends ApplicationAdapter implements InputProcessor {
         stateTime = 0f;
         game = new Gameplay(atlas);
         Gdx.input.setInputProcessor(this);
+
+        gameMusic = Gdx.audio.newMusic(Gdx.files.internal("theme_sound.mp3"));
+        gameMusic.setLooping(true);
+        gameMusic.play();
 	}
 
 	@Override

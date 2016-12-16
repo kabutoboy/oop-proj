@@ -8,7 +8,8 @@ import java.util.ArrayList;
 public class Side {
 
     protected int life;
-    protected int gold;
+    protected float gold;
+    protected float goldPerMinute;
 
     protected ArrayList<Unit> units;
     protected int direction;
@@ -16,6 +17,7 @@ public class Side {
     public Side() {
         life = 0;
         gold = 0;
+        goldPerMinute = 60;
         units = new ArrayList<Unit>();
         direction = 0;
     }
@@ -38,17 +40,19 @@ public class Side {
     public int getLife() {
         return life;
     }
-    public void setGold(int gd) {
+    public void setGold(float gd) {
         gold = gd;
     }
-    public void addGold(int amnt) {
+    public void addGold(float amnt) {
         gold += amnt;
     }
-    public void subGold(int amnt) {
+    public void subGold(float amnt) {
         gold -= amnt;
     }
-    public int getGold() {
+    public float getGold() {
         return gold;
     }
-
+    public void updateGold(float deltaTime) {
+        gold += deltaTime * goldPerMinute / 60f;
+    }
 }
